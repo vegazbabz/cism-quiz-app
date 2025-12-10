@@ -1,7 +1,23 @@
+# Generated files
+*.html
+*.csv
+*.tmp
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+# OS
+.DS_Store
+Thumbs.db
+.vscode/
 # User data and progress
 quiz_progress.json
 quiz_results.txt
-
 # Python
 __pycache__/
 *.pyc
@@ -23,33 +39,27 @@ wheels/
 *.egg-info/
 .installed.cfg
 *.egg
-
 # Virtual environments
 .env
 .venv
 env/
 venv/
 ENV/
-
 # IDE
 .idea/
 .vscode/
 *.swp
 *.swo
 *~
-
 # OS
 .DS_Store
 Thumbs.db
-
 # Flask
 instance/
 .webassets-cache
-
 # Testing
 .pytest_cache/
 .coverage
 htmlcov/
-
 # Logs
-*.log
+*.log
