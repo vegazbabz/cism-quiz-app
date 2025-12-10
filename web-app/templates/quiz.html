@@ -1,0 +1,813 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CISM Practice Quiz</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 5px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        .btn-primary {
+            background-color: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        .btn-secondary {
+            background-color: #48bb78;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background-color: #38a169;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        .btn-danger {
+            background-color: #f56565;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background-color: #e53e3e;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        .stats-bar {
+            background: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-around;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 0.9em;
+            margin-bottom: 5px;
+        }
+
+        .stat-value {
+            font-size: 1.8em;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .quiz-container {
+            display: none;
+        }
+
+        .quiz-container.active {
+            display: block;
+        }
+
+        .question-card {
+            background: white;
+            padding: 30px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+
+        .question-card:hover {
+            box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+        }
+
+        .question-number {
+            color: #667eea;
+            font-weight: bold;
+            margin-bottom: 10px;
+            font-size: 0.9em;
+        }
+
+        .question-text {
+            font-size: 1.2em;
+            font-weight: 600;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        .choices {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .choice {
+            display: flex;
+            align-items: flex-start;
+            padding: 15px;
+            border: 2px solid #e2e8f0;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: #f9fafb;
+        }
+
+        .choice:hover {
+            border-color: #667eea;
+            background: #f0f4ff;
+        }
+
+        .choice input[type="radio"] {
+            margin-right: 12px;
+            margin-top: 2px;
+            cursor: pointer;
+            width: 18px;
+            height: 18px;
+            accent-color: #667eea;
+        }
+
+        .choice label {
+            cursor: pointer;
+            flex: 1;
+            display: flex;
+            align-items: center;
+        }
+
+        .choice.correct {
+            border-color: #48bb78;
+            background: #f0fdf4;
+        }
+
+        .choice.incorrect {
+            border-color: #f56565;
+            background: #fef2f2;
+        }
+
+        .choice.selected {
+            border-color: #667eea;
+            background: #eef2ff;
+        }
+
+        .feedback {
+            margin-top: 20px;
+            padding: 20px;
+            border-radius: 6px;
+            display: none;
+        }
+
+        .feedback.show {
+            display: block;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .feedback.correct {
+            background: #f0fdf4;
+            border-left: 4px solid #48bb78;
+            color: #166534;
+        }
+
+        .feedback.incorrect {
+            background: #fef2f2;
+            border-left: 4px solid #f56565;
+            color: #7f1d1d;
+        }
+
+        .feedback-title {
+            font-weight: bold;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+
+        .feedback-answer {
+            margin: 10px 0;
+            padding: 10px;
+            background: rgba(255,255,255,0.5);
+            border-radius: 4px;
+            font-size: 0.95em;
+        }
+
+        .feedback-explanation {
+            margin-top: 12px;
+            padding: 12px;
+            background: rgba(255,255,255,0.5);
+            border-radius: 4px;
+            line-height: 1.6;
+            font-style: italic;
+        }
+
+        .welcome-screen {
+            background: white;
+            padding: 60px 40px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .welcome-screen h2 {
+            color: #667eea;
+            font-size: 2em;
+            margin-bottom: 20px;
+        }
+
+        .welcome-screen p {
+            color: #666;
+            margin-bottom: 30px;
+            line-height: 1.8;
+            font-size: 1.05em;
+        }
+
+        .welcome-screen .button-group {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .results-screen {
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .results-screen h2 {
+            color: #667eea;
+            font-size: 2em;
+            margin-bottom: 20px;
+        }
+
+        .score-display {
+            font-size: 3em;
+            font-weight: bold;
+            color: #667eea;
+            margin: 30px 0;
+        }
+
+        .rating {
+            font-size: 1.3em;
+            margin: 20px 0;
+        }
+
+        .rating.excellent { color: #48bb78; }
+        .rating.very-good { color: #38b2ac; }
+        .rating.good { color: #ed8936; }
+        .rating.fair { color: #ed8936; }
+        .rating.poor { color: #f56565; }
+
+        .progress-bar {
+            width: 100%;
+            height: 4px;
+            background: #e2e8f0;
+            border-radius: 2px;
+            margin-top: 20px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            transition: width 0.3s ease;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: white;
+        }
+
+        .loading-spinner {
+            border: 4px solid rgba(255,255,255,0.3);
+            border-top: 4px solid white;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .scroll-indicator {
+            text-align: center;
+            color: white;
+            margin-top: 30px;
+            opacity: 0.8;
+            font-size: 0.9em;
+        }
+
+        .questions-count {
+            text-align: center;
+            color: white;
+            margin-bottom: 20px;
+            font-size: 1.1em;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8em;
+            }
+
+            .question-card {
+                padding: 20px;
+            }
+
+            .choice {
+                padding: 12px;
+            }
+
+            .controls {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+            }
+
+            .stats-bar {
+                flex-direction: column;
+                gap: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📚 CISM Practice Quiz</h1>
+            <p>Learn by answering questions with instant feedback</p>
+        </div>
+
+        <!-- Welcome Screen -->
+        <div id="welcomeScreen" class="welcome-screen">
+            <h2>Welcome to CISM Quiz</h2>
+            <p>Test your knowledge with interactive multiple-choice questions. Get instant feedback and detailed explanations for each answer.</p>
+            <div class="button-group">
+                <button class="btn btn-primary" title="Take quiz with questions in their original order. Answer all questions to see your score." onclick="startQuiz()">
+                    ▶️ Start Quiz
+                </button>
+                <button class="btn btn-secondary" title="Same as Start Quiz but questions appear in random order to prevent memorization." onclick="startShuffledQuiz()">
+                    🔀 Shuffle Questions
+                </button>
+                <button class="btn btn-secondary" title="Review all questions with answers immediately visible. Perfect for learning the material." onclick="practiceMode()">
+                    📖 Practice Mode
+                </button>
+            </div>
+            <div style="margin-top: 40px; font-size: 0.95em; color: #666; background: #f0f4ff; padding: 20px; border-radius: 8px;">
+                <strong>💡 Button Guide:</strong>
+                <ul style="margin-top: 10px; margin-left: 20px;">
+                    <li><strong>▶️ Start Quiz:</strong> Take all questions in order. Select your answer and see instant feedback. Your score is calculated when you finish.</li>
+                    <li><strong>🔀 Shuffle Questions:</strong> Same as Start Quiz but questions are randomized. Great for testing without memorizing order.</li>
+                    <li><strong>📖 Practice Mode:</strong> Review all questions with answers and explanations shown right away. Ideal for studying and learning.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Quiz Container -->
+        <div id="quizContainer" class="quiz-container">
+            <div class="stats-bar">
+                <div class="stat-item">
+                    <div class="stat-label">Current Score</div>
+                    <div class="stat-value"><span id="currentScore">0</span>/<span id="totalQuestions">0</span></div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">Percentage</div>
+                    <div class="stat-value"><span id="percentage">0</span>%</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">Answered</div>
+                    <div class="stat-value"><span id="answeredCount">0</span>/<span id="totalQuestionsCount">0</span></div>
+                </div>
+            </div>
+
+            <div class="controls">
+                <button class="btn btn-danger" onclick="endQuiz()">End Quiz</button>
+                <button class="btn btn-primary" onclick="resetQuiz()">Reset All Answers</button>
+            </div>
+
+            <div class="questions-count" id="loadingIndicator">
+                Loading all questions... This may take a moment with large question sets.
+            </div>
+
+            <div id="questionsContainer"></div>
+
+            <div class="scroll-indicator">
+                👇 Scroll down to see more questions
+            </div>
+        </div>
+
+        <!-- Results Screen -->
+        <div id="resultsScreen" class="results-screen" style="display: none;">
+            <h2>Quiz Complete!</h2>
+            <div class="score-display"><span id="finalScore">0</span>/<span id="finalTotal">0</span></div>
+            <div id="rating" class="rating"></div>
+            <div id="resultsSummary"></div>
+            <div style="margin-top: 30px;">
+                <button class="btn btn-primary" onclick="location.reload()">Start Over</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let allQuestions = [];
+        let currentQuestions = [];
+        let answers = {};
+        let isQuizActive = false;
+        let shuffled = false;
+        let isPracticeMode = false;
+
+        // Load questions on page load
+        async function loadQuestions() {
+            try {
+                const response = await fetch('/api/questions');
+                const data = await response.json();
+                allQuestions = data.questions;
+                console.log(`✓ Loaded ${data.total} questions`);
+            } catch (error) {
+                console.error('Error loading questions:', error);
+                alert('Failed to load questions. Make sure cism_questions.json exists.');
+            }
+        }
+
+        async function startQuiz() {
+            if (allQuestions.length === 0) await loadQuestions();
+            currentQuestions = allQuestions;
+            shuffled = false;
+            isPracticeMode = false;
+            initializeQuiz();
+        }
+
+        async function startShuffledQuiz() {
+            if (allQuestions.length === 0) await loadQuestions();
+            try {
+                const response = await fetch('/api/questions/shuffled');
+                const data = await response.json();
+                currentQuestions = data.questions;
+                shuffled = true;
+                isPracticeMode = false;
+                initializeQuiz();
+            } catch (error) {
+                console.error('Error loading shuffled questions:', error);
+            }
+        }
+
+        async function practiceMode() {
+            if (allQuestions.length === 0) await loadQuestions();
+            currentQuestions = allQuestions;
+            shuffled = false;
+            isPracticeMode = true;
+            initializeQuiz();
+        }
+
+        function initializeQuiz() {
+            document.getElementById('welcomeScreen').style.display = 'none';
+            document.getElementById('quizContainer').classList.add('active');
+            document.getElementById('resultsScreen').style.display = 'none';
+            
+            isQuizActive = true;
+            answers = {};
+            
+            document.getElementById('totalQuestions').textContent = currentQuestions.length;
+            document.getElementById('totalQuestionsCount').textContent = currentQuestions.length;
+            
+            renderQuestions();
+            updateStats();
+        }
+
+        function renderQuestions() {
+            const container = document.getElementById('questionsContainer');
+            const loadingIndicator = document.getElementById('loadingIndicator');
+            
+            container.innerHTML = '';
+            loadingIndicator.textContent = `Loading ${currentQuestions.length} questions...`;
+            
+            // Render all questions at once (for large sets, use document fragment for performance)
+            const fragment = document.createDocumentFragment();
+            
+            currentQuestions.forEach((question, index) => {
+                const questionCard = document.createElement('div');
+                questionCard.className = 'question-card';
+                questionCard.id = `question-${question.number}`;
+                
+                let choicesHtml = '<div class="choices">';
+                
+                Object.entries(question.choices).forEach(([letter, text]) => {
+                    const isChecked = answers[question.number] === letter ? 'checked' : '';
+                    const selectedClass = answers[question.number] === letter ? 'selected' : '';
+                    
+                    choicesHtml += `
+                        <div class="choice ${selectedClass}" onclick="handleChoiceClick(this)">
+                            <input type="radio" id="q${question.number}_${letter}" 
+                                   name="question_${question.number}" 
+                                   value="${letter}" 
+                                   ${isChecked}
+                                   onchange="selectAnswer(${question.number}, '${letter}')">
+                            <label for="q${question.number}_${letter}">
+                                <strong>${letter}.</strong> ${text}
+                            </label>
+                        </div>
+                    `;
+                });
+                
+                choicesHtml += '</div>';
+                
+                const feedbackId = `feedback-${question.number}`;
+                let feedbackHtml = `<div class="feedback" id="${feedbackId}"></div>`;
+                
+                questionCard.innerHTML = `
+                    <div class="question-number">Question ${question.number}</div>
+                    <div class="question-text">${question.question}</div>
+                    ${choicesHtml}
+                    ${feedbackHtml}
+                `;
+                
+                fragment.appendChild(questionCard);
+            });
+            
+            container.appendChild(fragment);
+            loadingIndicator.textContent = `✓ All ${currentQuestions.length} questions loaded!`;
+            
+            // Scroll to top
+            window.scrollTo(0, 0);
+        }
+
+        function handleChoiceClick(element) {
+            // Remove selected class from all choices in this group
+            const questionCard = element.closest('.question-card');
+            questionCard.querySelectorAll('.choice').forEach(choice => {
+                choice.classList.remove('selected');
+            });
+            
+            // Add selected class to clicked choice
+            element.classList.add('selected');
+            
+            // Trigger radio button change
+            const radio = element.querySelector('input[type="radio"]');
+            if (radio && !radio.checked) {
+                radio.click();
+            }
+        }
+
+        async function selectAnswer(questionNumber, answer) {
+            answers[questionNumber] = answer;
+            updateStats();
+            
+            // Find the question
+            const question = currentQuestions.find(q => q.number === questionNumber);
+            if (!question) return;
+            
+            // Show feedback immediately
+            const feedbackDiv = document.getElementById(`feedback-${questionNumber}`);
+            feedbackDiv.classList.remove('show', 'correct', 'incorrect');
+            
+            try {
+                const response = await fetch('/api/check-answer', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        question_id: questionNumber,
+                        answer: answer
+                    })
+                });
+                
+                const result = await response.json();
+                
+                // Handle error responses
+                if (response.status !== 200 || !result.correct_answer) {
+                    feedbackDiv.innerHTML = `
+                        <div class="feedback-title">⚠️ Answer Information Incomplete</div>
+                        <div class="feedback-explanation">
+                            This question doesn't have answer data available yet.
+                        </div>
+                    `;
+                    feedbackDiv.className = `feedback show`;
+                    return;
+                }
+                
+                // Update choice styling
+                const questionCard = document.getElementById(`question-${questionNumber}`);
+                questionCard.querySelectorAll('.choice').forEach(choice => {
+                    choice.classList.remove('correct', 'incorrect');
+                    
+                    const radio = choice.querySelector('input[type="radio"]');
+                    if (radio.value === result.correct_answer) {
+                        choice.classList.add('correct');
+                    } else if (radio.checked && radio.value !== result.correct_answer) {
+                        choice.classList.add('incorrect');
+                    }
+                });
+                
+                // Show feedback
+                let feedbackClass = result.correct ? 'correct' : 'incorrect';
+                let feedbackTitle = result.correct ? '✓ Correct!' : '✗ Incorrect';
+                
+                let feedbackContent = `
+                    <div class="feedback-title">${feedbackTitle}</div>
+                `;
+                
+                if (!result.correct && result.correct_answer) {
+                    feedbackContent += `
+                        <div class="feedback-answer">
+                            <strong>Correct Answer:</strong> ${result.correct_answer}. ${result.choice_text}
+                        </div>
+                    `;
+                }
+                
+                if (result.explanation) {
+                    feedbackContent += `
+                        <div class="feedback-explanation">
+                            <strong>📖 Explanation:</strong><br>${result.explanation}
+                        </div>
+                    `;
+                }
+                
+                feedbackDiv.innerHTML = feedbackContent;
+                feedbackDiv.className = `feedback show ${feedbackClass}`;
+                
+            } catch (error) {
+                console.error('Error checking answer:', error);
+                feedbackDiv.innerHTML = `
+                    <div class="feedback-title">❌ Error</div>
+                    <div class="feedback-explanation">
+                        There was an error checking your answer. Please try again.
+                    </div>
+                `;
+                feedbackDiv.className = `feedback show incorrect`;
+            }
+        }
+
+        function updateStats() {
+            const answered = Object.keys(answers).length;
+            const total = currentQuestions.length;
+            let correct = 0;
+            
+            // Count correct answers (simplified - in real scenario would need to verify)
+            Object.entries(answers).forEach(([questionNum, answer]) => {
+                const question = currentQuestions.find(q => q.number === parseInt(questionNum));
+                if (question && question.answer === answer.toUpperCase()) {
+                    correct++;
+                }
+            });
+            
+            document.getElementById('currentScore').textContent = correct;
+            document.getElementById('answeredCount').textContent = answered;
+            const percentage = total > 0 ? Math.round((correct / total) * 100) : 0;
+            document.getElementById('percentage').textContent = percentage;
+        }
+
+        function resetQuiz() {
+            if (confirm('Are you sure you want to reset all answers?')) {
+                answers = {};
+                renderQuestions();
+                updateStats();
+            }
+        }
+
+        async function endQuiz() {
+            if (!confirm('Are you sure you want to end the quiz?')) {
+                return;
+            }
+            
+            const total = currentQuestions.length;
+            let correct = 0;
+            
+            Object.entries(answers).forEach(([questionNum, answer]) => {
+                const question = currentQuestions.find(q => q.number === parseInt(questionNum));
+                if (question && question.answer === answer.toUpperCase()) {
+                    correct++;
+                }
+            });
+            
+            // Save results
+            await fetch('/api/save-result', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ score: correct, total: total })
+            });
+            
+            // Show results
+            showResults(correct, total);
+        }
+
+        function showResults(score, total) {
+            document.getElementById('quizContainer').classList.remove('active');
+            document.getElementById('resultsScreen').style.display = 'block';
+            
+            document.getElementById('finalScore').textContent = score;
+            document.getElementById('finalTotal').textContent = total;
+            
+            const percentage = (score / total * 100).toFixed(1);
+            const ratingDiv = document.getElementById('rating');
+            let rating = '';
+            let ratingClass = '';
+            
+            if (percentage >= 90) {
+                rating = '🌟 Excellent!';
+                ratingClass = 'excellent';
+            } else if (percentage >= 80) {
+                rating = '👍 Very Good!';
+                ratingClass = 'very-good';
+            } else if (percentage >= 70) {
+                rating = '✓ Good';
+                ratingClass = 'good';
+            } else if (percentage >= 60) {
+                rating = 'Fair';
+                ratingClass = 'fair';
+            } else {
+                rating = 'Needs Improvement';
+                ratingClass = 'poor';
+            }
+            
+            ratingDiv.textContent = rating + ' (' + percentage + '%)';
+            ratingDiv.className = `rating ${ratingClass}`;
+            
+            let summary = `<p>You answered ${score} out of ${total} questions correctly.</p>`;
+            if (score === total) {
+                summary += '<p style="margin-top: 20px; font-size: 1.2em;">🎉 Perfect Score! Excellent work!</p>';
+            }
+            
+            document.getElementById('resultsSummary').innerHTML = summary;
+        }
+
+        // Initialize on page load
+        window.addEventListener('load', loadQuestions);
+    </script>
+</body>
+</html>
