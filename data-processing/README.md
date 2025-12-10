@@ -4,31 +4,26 @@ Tools for extracting, cleaning, and validating CISM practice exam data.
 
 ## Overview
 
-This folder contains all scripts used for:
+This folder contains scripts used for:
 - PDF extraction and question parsing
-- Answer and explanation population
 - Data cleaning and formatting fixes
 - Quality verification and validation
+- Chapter organization
 
-## Scripts
+## Essential Scripts
 
 ### Extraction
-- `extract_questions_v2.py` - Advanced PDF extractor with pattern matching
-- `extract_questions.py` - Basic PDF extraction script
-- `EXTRACTION_GUIDE.md` - Detailed extraction documentation
+- **`extract_questions_v2.py`** - Extract questions from CISM PDF with pattern matching and OCR fixes
 
-### Data Population
-- `fill_answers.py` - Populate answers and explanations from choice text
-- `cleanup_json.py` - Fix formatting issues (spaced words, quotes, OCR artifacts)
-- `fix_smart_quotes.py` - Fix Unicode smart quotes
-- `fix_all_apostrophes.py` - Fix possessive apostrophe spacing
-- `fix_spaced_words.py` - Fix random spaces in the middle of words
+### Cleanup & Organization
+- **`cleanup_json.py`** - Fix formatting issues (spaced words, quotes, OCR artifacts)
+- **`consolidate_chapter_text.py`** - Consolidate and organize chapter overview text
 
 ### Validation & Verification
-- `verify_quality.py` - Comprehensive data quality check
-- `verify_json.py` - Quick JSON structure verification
-- `scan_issues.py` - Scan for specific formatting issues
-- `search_quotes.py` - Search for remaining quote issues
+- **`verify_quality.py`** - Comprehensive data quality check (structure, content, completeness)
+
+### Documentation
+- **`EXTRACTION_GUIDE.md`** - Detailed extraction workflow and documentation
 
 ## Usage
 
@@ -47,15 +42,19 @@ python extract_questions_v2.py
 # Clean up formatting
 python cleanup_json.py
 
+# Consolidate chapter text (optional)
+python consolidate_chapter_text.py
+
 # Verify data quality
 python verify_quality.py
 ```
 
 ## Data File Location
 
-The shared data file `cism_questions.json` is stored in the parent directory so it can be accessed by both:
+The shared data file `cism_questions.json` is stored in the parent directory so it can be accessed by:
 - Data processing scripts (for cleaning and validation)
 - Web application (for serving to users)
+- CLI application (for command-line practice)
 
 ## JSON Structure
 
@@ -73,3 +72,7 @@ The shared data file `cism_questions.json` is stored in the parent directory so 
   "explanation": "Detailed explanation"
 }
 ```
+
+## Note
+
+Specialized/one-off scripts have been removed to keep the toolkit focused on essential data preparation tasks.

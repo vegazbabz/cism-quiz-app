@@ -1,3 +1,8 @@
+# User data and progress
+quiz_progress.json
+quiz_results.txt
+
+# Python
 __pycache__/
 *.pyc
 *.pyo
@@ -18,14 +23,33 @@ wheels/
 *.egg-info/
 .installed.cfg
 *.egg
+
+# Virtual environments
 .env
 .venv
 env/
 venv/
 ENV/
-.DS_Store
-*.swp
-*.swo
+
+# IDE
 .idea/
 .vscode/
-quiz_results.txt
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Flask
+instance/
+.webassets-cache
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Logs
+*.log

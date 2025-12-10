@@ -7,28 +7,36 @@ A comprehensive CISM (Certified Information Security Manager) exam preparation p
 ```
 CISM-quiz-app/
 ├── web-app/                 # Flask web application
-│   ├── app.py
-│   ├── cism_quiz.py
-│   ├── requirements.txt
-│   └── templates/
-├── data-processing/         # Data extraction and cleaning scripts
+│   ├── app.py               # Main Flask server
+│   ├── cism_quiz.py         # CLI quiz interface
+│   ├── requirements.txt      # Python dependencies
+│   └── templates/           # HTML templates
+├── data-processing/         # Data extraction & validation scripts
 │   ├── extract_questions_v2.py
 │   ├── cleanup_json.py
+│   ├── consolidate_chapter_text.py
 │   ├── verify_quality.py
-│   └── [other processing scripts]
-├── cism_questions.json      # Shared question database (300 questions)
+│   └── EXTRACTION_GUIDE.md
+├── cism_questions.json      # Question database (300 questions)
+├── chapter_overviews.json   # Chapter organization & overviews
 └── README.md
 ```
 
 ## Features
 
 - 📚 Interactive quiz interfaces (CLI & Web)
-- 🔀 Multiple choice questions with detailed explanations
-- 📊 Performance tracking and analytics
+- 🔀 Multiple quiz modes (Standard, Shuffle, Practice, Custom Length)
+- 💬 Instant feedback with detailed explanations
+- 📊 Real-time performance tracking and scoring
+- 💾 **Persistent quiz progress** - Auto-saves after each answer, survives server restarts and browser refreshes
 - 💾 Save quiz results and track progress
-- 🎯 Flexible quiz modes
-- 🌐 Browser-based web interface
+- 📈 View Statistics: Review past quiz results with detailed history and performance metrics
+- 🎯 Chapter-based organization with overviews
+- ⏱️ Built-in timer for timed practice
+- 🌐 Modern, responsive browser-based web interface
 - 📝 Command-line interface for quick practice
+- 🎨 Visual feedback (color-coded correct/incorrect answers)
+- 🔄 Smart caching with live file reloading (edit JSON files while server is running)
 
 ## Quick Start
 
@@ -140,7 +148,7 @@ Review questions with answers shown immediately - perfect for learning and memor
 Randomize question order for varied practice sessions.
 
 ### 5. View Statistics
-Review your past quiz results and track improvement over time.
+Review your past quiz results and track improvement over time. Available in both web and CLI interfaces.
 
 ## Question File Format
 
